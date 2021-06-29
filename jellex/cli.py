@@ -72,7 +72,7 @@ def print_exception(e=None, list_dict_data='', query='', response='', ex_type='R
     if len(response) > 70:
         response = response[:34] + ' ... ' + response[-34:]
 
-    exception_message = f'jello:  {ex_type} Exception:  {e.__class__.__name__}\n'
+    exception_message = f'jellex: {ex_type} Exception:  {e.__class__.__name__}\n'
 
     ex_map = {
         'query': query,
@@ -143,7 +143,7 @@ def main(data=None, query='_'):
 
     if opts.version_info:
         print(textwrap.dedent(f'''\
-            jello:   Version: {jello.__version__}
+            jellex:  Version: {jello.__version__}
                      Author: {jello.AUTHOR}
                      Website: {jello.WEBSITE}
                      Copyright: {jello.COPYRIGHT}
@@ -152,7 +152,7 @@ def main(data=None, query='_'):
         sys.exit()
 
     if data is None:
-        print_error('jello:  missing piped JSON or JSON Lines data\n')
+        print_error('jellex:  missing piped JSON or JSON Lines data\n')
 
     # only process if there is data
     if data and not data.isspace():
@@ -165,7 +165,7 @@ def main(data=None, query='_'):
             msg = f'''JSON Load Exception: Cannot parse the data (Not valid JSON or JSON Lines)
         {e}
         '''
-            print_error(f'jello:  {msg}')
+            print_error(f'jellex:  {msg}')
 
         # Read .jelloconf.py (if it exists) and run the query
         response = ''
