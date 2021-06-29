@@ -6,6 +6,8 @@ import textwrap
 import signal
 import jello
 from jello.lib import opts, load_json, pyquery, Schema, Json
+from rich import Console
+from rich.columns import Columns
 
 
 def ctrlc(signum, frame):
