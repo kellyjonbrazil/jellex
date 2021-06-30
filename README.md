@@ -1,10 +1,12 @@
 ![Tests](https://github.com/kellyjonbrazil/jellex/workflows/Tests/badge.svg?branch=master)
 ![Pypi](https://img.shields.io/pypi/v/jellex.svg)
 
-# Jello Explorer
+# Jello Explorer (Work in Progress)
 TUI to filter JSON and JSON Lines data with Python syntax
 
-`jellex` is a Text User Interface program to interactively process JSON and JSON Lines at the console using Python syntax. `jellex` uses [`jello`](https://github.com/kellyjonbrazil/jello) on the back-end to run the queries.
+## This project is on hold until the `textual` library matures and provides text editing capabilities
+
+Jello Explorer (`jellex`) is a Text User Interface program to interactively process JSON and JSON Lines at the console using Python syntax. `jellex` uses [`jello`](https://github.com/kellyjonbrazil/jello) on the back-end to run the queries.
 
 JSON or JSON Lines can be piped into `jellex` (JSON Lines are automatically slurped into a list of dictionaries) and are available as the variable `_`. Processed data can be output as JSON, JSON Lines, bash array lines, or a grep-able schema.
 
