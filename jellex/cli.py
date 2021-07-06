@@ -20,7 +20,7 @@ from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.formatted_text import PygmentsTokens
 from prompt_toolkit.lexers import PygmentsLexer
 
-text = '''{
+sample_text = '''{
   "name": "jc",
   "version": "1.15.7",
   "description": "JSON CLI output utility",
@@ -363,9 +363,10 @@ text = '''{
 
 def get_json(data, query):
     try:
-        response = pyquery(data, query)
+        jdata = load_json(data)
+        response = pyquery(jdata, query)
         json_out = Json()
-        output = json_out.create_json(response).strip('"').replace('\\n', '\n')
+        output = json_out.create_json(response)
         return output
     except Exception as e:
         return str(e)
@@ -386,7 +387,7 @@ editor = Frame(title='Editor',
 
 
 # Viewer Window
-json_text_tokens = list(pygments.lex(get_json(text, query.document.text), lexer=JsonLexer()))
+json_text_tokens = list(pygments.lex(get_json(sample_text, query.text), lexer=JsonLexer()))
 viewer_window = Window(content=FormattedTextControl(PygmentsTokens(json_text_tokens)),
                        allow_scroll_beyond_bottom=True,
                        ignore_content_width=True)
