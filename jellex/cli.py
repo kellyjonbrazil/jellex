@@ -360,12 +360,22 @@ text = '''{
 }
 '''
 
-json_text_tokens = list(pygments.lex(text, lexer=JsonLexer()))
+
+def get_json(data, query):
+    try:
+        response = pyquery(data, query)
+        json_out = Json()
+        output = json_out.create_json(response).strip('"').replace('\\n', '\n')
+        return output
+    except Exception as e:
+        return str(e)
+
 
 kb = KeyBindings()
 
 # Editor Window
 query = Buffer()
+query.text = '_'
 editor_window = Window(content=BufferControl(buffer=query, lexer=PygmentsLexer(PythonLexer)),
                        allow_scroll_beyond_bottom=True,
                        ignore_content_width=True)
@@ -376,6 +386,7 @@ editor = Frame(title='Editor',
 
 
 # Viewer Window
+json_text_tokens = list(pygments.lex(get_json(text, query.document.text), lexer=JsonLexer()))
 viewer_window = Window(content=FormattedTextControl(PygmentsTokens(json_text_tokens)),
                        allow_scroll_beyond_bottom=True,
                        ignore_content_width=True)
@@ -384,6 +395,8 @@ viewer_scroll = ScrollablePane(show_scrollbar=True,
 viewer = Frame(title='Viewer',
                body=viewer_scroll)
 
+
+# Main Screen
 root_container = VSplit(
     [
         editor,
@@ -393,6 +406,8 @@ root_container = VSplit(
 
 layout = Layout(root_container)
 
+
+# Application
 app = Application(key_bindings=kb,
                   layout=layout,
                   full_screen=True)
