@@ -5,7 +5,7 @@ from jello.lib import opts, load_json, pyquery, Schema, Json
 
 import pygments
 from pygments.lexers import JsonLexer
-from pygments.lexers.javascript import JavascriptLexer
+from pygments.lexers.python import PythonLexer
 
 from prompt_toolkit import Application
 from prompt_toolkit.widgets import Frame
@@ -18,7 +18,7 @@ from prompt_toolkit.application import get_app
 from prompt_toolkit.key_binding import KeyBindings
 
 from prompt_toolkit.formatted_text import PygmentsTokens
-from prompt_toolkit import print_formatted_text
+from prompt_toolkit.lexers import PygmentsLexer
 
 text = '''{
   "name": "jc",
@@ -366,7 +366,7 @@ kb = KeyBindings()
 
 # Editor Window
 query = Buffer()
-editor_window = Window(content=BufferControl(buffer=query),
+editor_window = Window(content=BufferControl(buffer=query, lexer=PygmentsLexer(PythonLexer)),
                        allow_scroll_beyond_bottom=True)
 editor_scroll = ScrollablePane(show_scrollbar=True,
                                content=editor_window)
