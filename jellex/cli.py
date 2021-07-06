@@ -367,7 +367,8 @@ kb = KeyBindings()
 # Editor Window
 query = Buffer()
 editor_window = Window(content=BufferControl(buffer=query, lexer=PygmentsLexer(PythonLexer)),
-                       allow_scroll_beyond_bottom=True)
+                       allow_scroll_beyond_bottom=True,
+                       ignore_content_width=True)
 editor_scroll = ScrollablePane(show_scrollbar=True,
                                content=editor_window)
 editor = Frame(title='Editor',
@@ -376,7 +377,8 @@ editor = Frame(title='Editor',
 
 # Viewer Window
 viewer_window = Window(content=FormattedTextControl(PygmentsTokens(json_text_tokens)),
-                       allow_scroll_beyond_bottom=True)
+                       allow_scroll_beyond_bottom=True,
+                       ignore_content_width=True)
 viewer_scroll = ScrollablePane(show_scrollbar=True,
                                content=viewer_window)
 viewer = Frame(title='Viewer',
