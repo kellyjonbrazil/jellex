@@ -1,204 +1,426 @@
-"""jello - query JSON at the command line with python syntax"""
+"""jellex - query JSON at the command line with python syntax"""
 
-import os
-import sys
-import textwrap
-import signal
 import jello
 from jello.lib import opts, load_json, pyquery, Schema, Json
-from rich import Console
-from rich.columns import Columns
 
+import pygments
+from pygments.lexers import JsonLexer
+from pygments.lexers.javascript import JavascriptLexer
 
-def ctrlc(signum, frame):
-    """exit with error on SIGINT"""
-    sys.exit(1)
+from prompt_toolkit import Application
+from prompt_toolkit.widgets import Frame
+from prompt_toolkit.buffer import Buffer
+from prompt_toolkit.layout import ScrollablePane
+from prompt_toolkit.layout.containers import VSplit, Window
+from prompt_toolkit.layout.controls import BufferControl, FormattedTextControl
+from prompt_toolkit.layout.layout import Layout
+from prompt_toolkit.application import get_app
+from prompt_toolkit.key_binding import KeyBindings
 
+from prompt_toolkit.formatted_text import PygmentsTokens
+from prompt_toolkit import print_formatted_text
 
-def get_stdin():
-    """return STDIN data"""
-    if sys.stdin.isatty():
-        return None
-    else:
-        return sys.stdin.read()
-
-
-def print_help():
-    print(textwrap.dedent('''\
-        jello:  query JSON at the command line with python syntax
-
-        Usage:  cat data.json | jello [OPTIONS] [QUERY]
-
-                -c   compact JSON output
-                -i   initialize environment with .jelloconf.py in ~ (linux) or %appdata% (Windows)
-                -l   output as lines suitable for assignment to a bash array
-                -m   monochrome output
-                -n   print selected null values
-                -r   raw string output (no quotes)
-                -s   print the JSON schema in grep-able format
-                -t   print type annotations in schema view
-                -v   version info
-                -h   help
-
-        Use '_' as the input data and use python dict and list bracket syntax or dot notation.
-
-        Examples:
-                cat data.json | jello _.foo
-                cat data.json | jello '_["foo"]'
-                variable=($(cat data.json | jello -l _.foo))
-    '''))
-    sys.exit()
-
-
-def print_error(message):
-    """print error messages to STDERR and quit with error code"""
-    print(message, file=sys.stderr)
-    sys.exit(1)
-
-
-def print_exception(e=None, list_dict_data='', query='', response='', ex_type='Runtime'):
-    list_dict_data = str(list_dict_data).replace('\n', '\\n')
-    query = str(query).replace('\n', '\\n')
-    response = str(response).replace('\n', '\\n')
-    e_text = ''
-
-    if hasattr(e, 'text'):
-        e_text = e.text.replace('\n', '')
-
-    if len(list_dict_data) > 70:
-        list_dict_data = list_dict_data[:34] + ' ... ' + list_dict_data[-34:]
-
-    if len(query) > 70:
-        query = query[:34] + ' ... ' + query[-34:]
-
-    if len(response) > 70:
-        response = response[:34] + ' ... ' + response[-34:]
-
-    exception_message = f'jellex: {ex_type} Exception:  {e.__class__.__name__}\n'
-
-    ex_map = {
-        'query': query,
-        'data': list_dict_data,
-        'response': response
+text = '''{
+  "name": "jc",
+  "version": "1.15.7",
+  "description": "JSON CLI output utility",
+  "author": "Kelly Brazil",
+  "author_email": "kellyjonbrazil@gmail.com",
+  "website": "https://github.com/kellyjonbrazil/jc",
+  "copyright": "© 2019-2021 Kelly Brazil",
+  "license": "MIT License",
+  "parser_count": 74,
+  "parsers": [
+    {
+      "name": "acpi",
+      "argument": "--acpi",
+      "version": "1.2",
+      "description": "`acpi` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux"
+      ],
+      "magic_commands": [
+        "acpi"
+      ]
+    },
+    {
+      "name": "airport",
+      "argument": "--airport",
+      "version": "1.3",
+      "description": "`airport -I` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "darwin"
+      ],
+      "magic_commands": [
+        "airport -I"
+      ]
+    },
+    {
+      "name": "systemctl",
+      "argument": "--systemctl",
+      "version": "1.4",
+      "description": "`systemctl` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux"
+      ],
+      "magic_commands": [
+        "systemctl"
+      ]
+    },
+    {
+      "name": "systemctl_lj",
+      "argument": "--systemctl-lj",
+      "version": "1.5",
+      "description": "`systemctl list-jobs` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux"
+      ],
+      "magic_commands": [
+        "systemctl list-jobs"
+      ]
+    },
+    {
+      "name": "systemctl_ls",
+      "argument": "--systemctl-ls",
+      "version": "1.4",
+      "description": "`systemctl list-sockets` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux"
+      ],
+      "magic_commands": [
+        "systemctl list-sockets"
+      ]
+    },
+    {
+      "name": "systemctl_luf",
+      "argument": "--systemctl-luf",
+      "version": "1.4",
+      "description": "`systemctl list-unit-files` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux"
+      ],
+      "magic_commands": [
+        "systemctl list-unit-files"
+      ]
+    },
+    {
+      "name": "systeminfo",
+      "argument": "--systeminfo",
+      "version": "1.0",
+      "description": "`systeminfo` command parser",
+      "author": "Jon Smith",
+      "author_email": "jon@rebelliondefense.com",
+      "compatible": [
+        "win32"
+      ],
+      "magic_commands": [
+        "systeminfo"
+      ]
+    },
+    {
+      "name": "time",
+      "argument": "--time",
+      "version": "1.2",
+      "description": "`/usr/bin/time` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux",
+        "darwin",
+        "cygwin",
+        "aix",
+        "freebsd"
+      ]
+    },
+    {
+      "name": "timedatectl",
+      "argument": "--timedatectl",
+      "version": "1.4",
+      "description": "`timedatectl status` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux"
+      ],
+      "magic_commands": [
+        "timedatectl",
+        "timedatectl status"
+      ]
+    },
+    {
+      "name": "tracepath",
+      "argument": "--tracepath",
+      "version": "1.2",
+      "description": "`tracepath` and `tracepath6` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux"
+      ],
+      "magic_commands": [
+        "tracepath",
+        "tracepath6"
+      ]
+    },
+    {
+      "name": "traceroute",
+      "argument": "--traceroute",
+      "version": "1.3",
+      "description": "`traceroute` and `traceroute6` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "details": "Using the trparse library by Luis Benitez at https://github.com/lbenitez000/trparse",
+      "compatible": [
+        "linux",
+        "darwin",
+        "freebsd"
+      ],
+      "magic_commands": [
+        "traceroute",
+        "traceroute6"
+      ]
+    },
+    {
+      "name": "ufw",
+      "argument": "--ufw",
+      "version": "1.0",
+      "description": "`ufw status` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux"
+      ],
+      "magic_commands": [
+        "ufw status"
+      ]
+    },
+    {
+      "name": "ufw_appinfo",
+      "argument": "--ufw-appinfo",
+      "version": "1.0",
+      "description": "`ufw app info [application]` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux"
+      ],
+      "magic_commands": [
+        "ufw app"
+      ]
+    },
+    {
+      "name": "uname",
+      "argument": "--uname",
+      "version": "1.5",
+      "description": "`uname -a` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux",
+        "darwin",
+        "freebsd"
+      ],
+      "magic_commands": [
+        "uname"
+      ]
+    },
+    {
+      "name": "upower",
+      "argument": "--upower",
+      "version": "1.2",
+      "description": "`upower` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux"
+      ],
+      "magic_commands": [
+        "upower"
+      ]
+    },
+    {
+      "name": "uptime",
+      "argument": "--uptime",
+      "version": "1.5",
+      "description": "`uptime` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux",
+        "darwin",
+        "cygwin",
+        "aix",
+        "freebsd"
+      ],
+      "magic_commands": [
+        "uptime"
+      ]
+    },
+    {
+      "name": "w",
+      "argument": "--w",
+      "version": "1.4",
+      "description": "`w` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux",
+        "darwin",
+        "cygwin",
+        "aix",
+        "freebsd"
+      ],
+      "magic_commands": [
+        "w"
+      ]
+    },
+    {
+      "name": "wc",
+      "argument": "--wc",
+      "version": "1.2",
+      "description": "`wc` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux",
+        "darwin",
+        "cygwin",
+        "aix",
+        "freebsd"
+      ],
+      "magic_commands": [
+        "wc"
+      ]
+    },
+    {
+      "name": "who",
+      "argument": "--who",
+      "version": "1.4",
+      "description": "`who` command parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "compatible": [
+        "linux",
+        "darwin",
+        "cygwin",
+        "aix",
+        "freebsd"
+      ],
+      "magic_commands": [
+        "who"
+      ]
+    },
+    {
+      "name": "xml",
+      "argument": "--xml",
+      "version": "1.5",
+      "description": "XML file parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "details": "Using the xmltodict library at https://github.com/martinblech/xmltodict",
+      "compatible": [
+        "linux",
+        "darwin",
+        "cygwin",
+        "win32",
+        "aix",
+        "freebsd"
+      ]
+    },
+    {
+      "name": "yaml",
+      "argument": "--yaml",
+      "version": "1.5",
+      "description": "YAML file parser",
+      "author": "Kelly Brazil",
+      "author_email": "kellyjonbrazil@gmail.com",
+      "details": "Using the ruamel.yaml library at https://pypi.org/project/ruamel.yaml",
+      "compatible": [
+        "linux",
+        "darwin",
+        "cygwin",
+        "win32",
+        "aix",
+        "freebsd"
+      ]
     }
+  ]
+}
+'''
 
-    exception_message += f'        {e}\n'
+json_text_tokens = list(pygments.lex(text, lexer=JsonLexer()))
 
-    if e_text:
-        exception_message += f'        {e_text}\n'
+kb = KeyBindings()
 
-    for item_name, item in ex_map.items():
-        if item:
-            exception_message += f'        {item_name}: {item}\n'
+# Editor Window
+query = Buffer()
+editor_window = Window(content=BufferControl(buffer=query),
+                       allow_scroll_beyond_bottom=True)
+editor_scroll = ScrollablePane(show_scrollbar=True,
+                               content=editor_window)
+editor = Frame(title='Editor',
+               body=editor_scroll)
 
-    print(exception_message, file=sys.stderr)
-    sys.exit(1)
+
+# Viewer Window
+viewer_window = Window(content=FormattedTextControl(PygmentsTokens(json_text_tokens)),
+                       allow_scroll_beyond_bottom=True)
+viewer_scroll = ScrollablePane(show_scrollbar=True,
+                               content=viewer_window)
+viewer = Frame(title='Viewer',
+               body=viewer_scroll)
+
+root_container = VSplit(
+    [
+        editor,
+        viewer
+    ]
+)
+
+layout = Layout(root_container)
+
+app = Application(key_bindings=kb,
+                  layout=layout,
+                  full_screen=True)
 
 
-def main(data=None, query='_'):
-    # break on ctrl-c keyboard interrupt
-    signal.signal(signal.SIGINT, ctrlc)
+@kb.add('c-q')
+def exit_(event):
+    """Pressing Ctrl-Q will exit the user interface."""
+    event.app.exit(result=query.text)
 
-    # break on pipe error. need try/except for windows compatibility
-    try:
-        signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-    except AttributeError:
-        pass
 
-    # enable colors for Windows cmd.exe terminal
-    if sys.platform.startswith('win32'):
-        os.system('')
+@kb.add('tab')
+def focus_viewer(event):
+    """Pressing TAB will change the focus."""
+    get_app().layout.focus(viewer_window)
 
-    if data is None:
-        data = get_stdin()
 
-    options = []
-    long_options = {}
+@kb.add('s-tab')
+def focus_editor(event):
+    """Pressing Shift TAB will change the focus."""
+    get_app().layout.focus(editor_window)
 
-    for arg in sys.argv[1:]:
-        if arg.startswith('-') and not arg.startswith('--'):
-            options.extend(arg[1:])
+# @viewer_kb.add('')
+# def down_arrow(event):
+#     get_app().
 
-        elif arg.startswith('--'):
-            try:
-                k, v = arg[2:].split('=')
-                long_options[k] = int(v)
-            except Exception:
-                print_help()
 
-        else:
-            query = arg
-
-    opts.compact = opts.compact or 'c' in options
-    opts.initialize = opts.initialize or 'i' in options
-    opts.lines = opts.lines or 'l' in options
-    opts.mono = opts.mono or 'm' in options
-    opts.nulls = opts.nulls or 'n' in options
-    opts.raw = opts.raw or 'r' in options
-    opts.schema = opts.schema or 's' in options
-    opts.types = opts.types or 't' in options
-    opts.version_info = opts.version_info or 'v' in options
-    opts.helpme = opts.helpme or 'h' in options
-
-    if opts.helpme:
-        print_help()
-
-    if opts.version_info:
-        print(textwrap.dedent(f'''\
-            jellex:  Version: {jello.__version__}
-                     Author: {jello.AUTHOR}
-                     Website: {jello.WEBSITE}
-                     Copyright: {jello.COPYRIGHT}
-                     License: {jello.LICENSE}
-        '''))
-        sys.exit()
-
-    if data is None:
-        print_error('jellex:  missing piped JSON or JSON Lines data\n')
-
-    # only process if there is data
-    if data and not data.isspace():
-
-        # load the JSON or JSON Lines
-        list_dict_data = None
-        try:
-            list_dict_data = load_json(data)
-        except Exception as e:
-            msg = f'''JSON Load Exception: Cannot parse the data (Not valid JSON or JSON Lines)
-        {e}
-        '''
-            print_error(f'jellex:  {msg}')
-
-        # Read .jelloconf.py (if it exists) and run the query
-        response = ''
-        try:
-            response = pyquery(list_dict_data, query)
-        except Exception as e:
-            print_exception(e, list_dict_data, query, ex_type='Query')
-
-        # Create and print schema or JSON/JSON-Lines/Lines
-        output = ''
-        try:
-            if opts.schema:
-                schema = Schema()
-                output = schema.create_schema(response)
-
-                if not opts.mono and sys.stdout.isatty():
-                    schema.set_colors()
-                    output = schema.color_output(output)
-
-            else:
-                json_out = Json()
-                output = json_out.create_json(response)
-
-                if not opts.mono and not opts.raw and sys.stdout.isatty():
-                    json_out.set_colors()
-                    output = json_out.color_output(output)
-
-            print(output)
-
-        except Exception as e:
-            print_exception(e, list_dict_data, query, response, ex_type='Formatting')
+def main():
+    result = app.run()
+    print(f'You said: {result}')
 
 
 if __name__ == '__main__':
