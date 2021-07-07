@@ -1,7 +1,6 @@
 """jellex - query JSON at the command line with python syntax"""
 
-import jello
-from jello.lib import opts, load_json, pyquery, Schema, Json
+from jello.lib import load_json, pyquery, Json
 
 import pygments
 from pygments.lexers import JsonLexer
@@ -20,7 +19,6 @@ from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.formatted_text import PygmentsTokens
 from prompt_toolkit.lexers import PygmentsLexer
 
-from prompt_toolkit import print_formatted_text
 
 sample_text = '''{
   "name": "jc",
@@ -374,6 +372,7 @@ def get_json(data, query):
         return str(e)
 
 
+# Initial content
 query = Buffer()
 query.text = '_'
 json_text_tokens = list(pygments.lex(get_json(sample_text, query.text), lexer=JsonLexer()))
@@ -387,7 +386,6 @@ def update_viewer_window(event):
 
 
 query = Buffer(on_text_changed=update_viewer_window)
-# query.on_text_changed = update_viewer_window
 
 kb = KeyBindings()
 
@@ -421,15 +419,12 @@ root_container = VSplit(
 
 layout = Layout(root_container)
 
+query.text = '_'
+
 # Application
 app = Application(key_bindings=kb,
                   layout=layout,
                   full_screen=True)
-
-
-# @kb.add('l')
-# def get_layout(event):
-#     print_formatted_text(get_app().layout)
 
 
 @kb.add('c-q')
@@ -449,14 +444,10 @@ def focus_editor(event):
     """Pressing Shift TAB will change the focus."""
     get_app().layout.focus(editor_window)
 
-# @viewer_kb.add('')
-# def down_arrow(event):
-#     get_app().
-
 
 def main():
     result = app.run()
-    print(f'You said: {result}')
+    print(f'Your query:\n\n{result}\n')
 
 
 if __name__ == '__main__':
