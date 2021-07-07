@@ -20,6 +20,8 @@ from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.formatted_text import PygmentsTokens
 from prompt_toolkit.lexers import PygmentsLexer
 
+from prompt_toolkit import print_formatted_text
+
 sample_text = '''{
   "name": "jc",
   "version": "1.15.7",
@@ -372,11 +374,24 @@ def get_json(data, query):
         return str(e)
 
 
+query = Buffer()
+query.text = '_'
+json_text_tokens = list(pygments.lex(get_json(sample_text, query.text), lexer=JsonLexer()))
+
+
+def update_viewer_window(event):
+    global json_text_tokens
+    json_text_tokens = list(pygments.lex(get_json(sample_text, query.text), lexer=JsonLexer()))
+    global viewer_window
+    viewer_window.content = FormattedTextControl(PygmentsTokens(json_text_tokens))
+
+
+query = Buffer(on_text_changed=update_viewer_window)
+# query.on_text_changed = update_viewer_window
+
 kb = KeyBindings()
 
 # Editor Window
-query = Buffer()
-query.text = '_'
 editor_window = Window(content=BufferControl(buffer=query, lexer=PygmentsLexer(PythonLexer)),
                        allow_scroll_beyond_bottom=True,
                        ignore_content_width=True)
@@ -387,7 +402,6 @@ editor = Frame(title='Editor',
 
 
 # Viewer Window
-json_text_tokens = list(pygments.lex(get_json(sample_text, query.text), lexer=JsonLexer()))
 viewer_window = Window(content=FormattedTextControl(PygmentsTokens(json_text_tokens)),
                        allow_scroll_beyond_bottom=True,
                        ignore_content_width=True)
@@ -407,11 +421,15 @@ root_container = VSplit(
 
 layout = Layout(root_container)
 
-
 # Application
 app = Application(key_bindings=kb,
                   layout=layout,
                   full_screen=True)
+
+
+# @kb.add('l')
+# def get_layout(event):
+#     print_formatted_text(get_app().layout)
 
 
 @kb.add('c-q')
