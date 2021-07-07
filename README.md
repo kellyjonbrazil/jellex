@@ -11,7 +11,7 @@ Here is a video of the current progress: https://youtu.be/lxfi9U6yzQk
 Jello Explorer (`jellex`) is a Text User Interface program to interactively process JSON and JSON Lines at the console using Python syntax. `jellex` uses [`jello`](https://github.com/kellyjonbrazil/jello) on the back-end to run the queries.
 
 ## Install
-YWork in progress
+Work in progress
 
 ### Usage
 ```
@@ -21,7 +21,7 @@ An Editor window will show on the left, a Viewer window will show on the right, 
 
 As you modify your query, the Viewer window will update with the latest results. If there are any errors in the query (syntax errors, etc.), they will be displayed in the Status window at the bottom.
 
-Use [CTRL]-[Q] to exit.
+Use `CTRL-Q` to exit.
 
 > Note: Reserved key names that cannot be accessed using dot notation can be accessed via standard python dictionary notation. (e.g. `_.foo["get"]` instead of `_.foo.get`)
 
@@ -60,4 +60,13 @@ Here is an example after running `jellex twitterdata.json` and modifying the que
 │                                                                                     │
 │                                                                                     │
 └─────────────────────────────────────────────────────────────────────────────────────┘
+```
+When you exit (`CTRL-Q`), you will be presented with your `jello` filter:
+```
+$ jellex twitterdata.json 
+Your query:
+
+jello '_[0].user'
+
+$
 ```
