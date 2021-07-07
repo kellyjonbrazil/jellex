@@ -9,8 +9,8 @@ from pygments.lexers.python import PythonLexer
 from prompt_toolkit import Application
 from prompt_toolkit.widgets import Frame
 from prompt_toolkit.buffer import Buffer
-from prompt_toolkit.layout import ScrollablePane
-from prompt_toolkit.layout.containers import VSplit, Window
+from prompt_toolkit.layout import ScrollablePane, Dimension
+from prompt_toolkit.layout.containers import VSplit, HSplit, Window
 from prompt_toolkit.layout.controls import BufferControl, FormattedTextControl
 from prompt_toolkit.layout.layout import Layout
 from prompt_toolkit.application import get_app
@@ -24,30 +24,39 @@ sample_text = '''{"name":"jc","version":"1.15.7","description":"JSON CLI output 
 
 
 def get_json(data, query):
+    """Returns a Tuple of (<JSON Response>, <Exception Message>)"""
     try:
         jdata = load_json(data)
         response = pyquery(jdata, query)
         json_out = Json()
         output = json_out.create_json(response)
-        return output
+        return output, ''
+
     except Exception as e:
-        return str(e)
+        return last_output, str(e)
 
 
 # Initial content
 query = Buffer()
 query.text = '_'
-json_text_tokens = list(pygments.lex(get_json(sample_text, query.text), lexer=JsonLexer()))
+last_output, status_text = get_json(sample_text, query.text)
+json_text_tokens = list(pygments.lex(last_output, lexer=JsonLexer()))
 
 
 def update_viewer_window(event):
     # get new JSON output
     global json_text_tokens
-    json_text_tokens = list(pygments.lex(get_json(sample_text, query.text), lexer=JsonLexer()))
+    global status_text
+    json_response, status_text = get_json(sample_text, query.text)
+    json_text_tokens = list(pygments.lex(json_response, lexer=JsonLexer()))
 
     # re-render the viewer window
     global viewer_window
     viewer_window.content = FormattedTextControl(PygmentsTokens(json_text_tokens))
+
+    # re-render the status window
+    global status_window
+    status_window.content = FormattedTextControl(status_text)
 
 
 query = Buffer(on_text_changed=update_viewer_window)
@@ -74,11 +83,19 @@ viewer = Frame(title='Viewer',
                body=viewer_scroll)
 
 
+# Status Window
+status_dimension = Dimension(min=2, max=2, preferred=2)
+status_window = Window(content=FormattedTextControl(status_text),
+                       height=status_dimension)
+status = Frame(title='Status',
+               body=status_window)
+
+
 # Main Screen
-root_container = VSplit(
+root_container = HSplit(
     [
-        editor,
-        viewer
+        VSplit([editor, viewer]),
+        status
     ]
 )
 
