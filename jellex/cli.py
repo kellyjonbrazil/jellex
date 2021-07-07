@@ -447,7 +447,10 @@ def focus_editor(event):
 def main():
     result = app.run()
     result = result.replace("'", '"')
-    print(f"Your query:\n\njello '\\\n{result}'\n")
+    if '\n' in result:
+        print(f"Your query:\n\njello '\\\n{result}'\n")
+    else:
+        print(f"Your query:\n\njello '{result}'\n")
 
 
 if __name__ == '__main__':
