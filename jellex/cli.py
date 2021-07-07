@@ -418,8 +418,7 @@ root_container = VSplit(
 )
 
 layout = Layout(root_container)
-
-query.text = '_'
+query.insert_text('_')
 
 # Application
 app = Application(key_bindings=kb,
