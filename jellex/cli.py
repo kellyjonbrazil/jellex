@@ -25,11 +25,14 @@ sample_text = '''{"name":"jc","version":"1.15.7","description":"JSON CLI output 
 
 def get_json(data, query):
     """Returns a Tuple of (<JSON Response>, <Exception Message>)"""
+    global last_output
+
     try:
         jdata = load_json(data)
         response = pyquery(jdata, query)
         json_out = Json()
         output = json_out.create_json(response)
+        last_output = output
         return output, ''
 
     except Exception as e:
