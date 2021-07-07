@@ -41,8 +41,11 @@ json_text_tokens = list(pygments.lex(get_json(sample_text, query.text), lexer=Js
 
 
 def update_viewer_window(event):
+    # get new JSON output
     global json_text_tokens
     json_text_tokens = list(pygments.lex(get_json(sample_text, query.text), lexer=JsonLexer()))
+
+    # re-render the viewer window
     global viewer_window
     viewer_window.content = FormattedTextControl(PygmentsTokens(json_text_tokens))
 
