@@ -37,8 +37,10 @@ def get_json(data, query):
         response = pyquery(jdata, query)
         json_out = Json()
         output = json_out.create_json(response)
-        last_output = output
-        return output, ''
+
+        # only return the first 10,000 chars for performance reasons for now
+        last_output = output[:10000]
+        return output[:10000], ''
 
     except Exception as e:
         return last_output, str(e)
