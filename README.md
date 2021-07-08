@@ -1,12 +1,10 @@
 ![Tests](https://github.com/kellyjonbrazil/jellex/workflows/Tests/badge.svg?branch=master)
 ![Pypi](https://img.shields.io/pypi/v/jellex.svg)
 
-# Jello Explorer (Work in Progress)
+# Jello Explorer
 TUI to filter JSON and JSON Lines data with Python syntax
 
-## This project is currently a working proof of concept and is still in progress.
-
-Here is a video of the current progress: https://youtu.be/9VCXjINa74E
+Here is a video of `jellex` in action: https://youtu.be/9VCXjINa74E
 
 Jello Explorer (`jellex`) is a Text User Interface program to interactively process JSON and JSON Lines at the console using Python syntax. `jellex` uses [`jello`](https://github.com/kellyjonbrazil/jello) on the back-end to run the queries.
 
@@ -20,7 +18,9 @@ pip install jellex
 ```
 jellex file.json
 ```
-An Editor window will show on the left, a Viewer window will show on the right, and a Status window will show on the bottom. The Editor window uses standard EMACS key bindings and allows you to type your Python syntax query. `_` is the sanitized JSON from the file presented as a python dict or list of dicts. You can use dot notation or traditional python bracket notation to access key names.
+An Editor window displays on the left, a Viewer window displays on the right, and a Status window displays on the bottom.
+
+The Editor window uses standard EMACS key bindings and allows you to type your Python syntax query. `_` is the sanitized JSON from the file presented as a python dict or list of dicts. You can use dot notation or traditional python bracket notation to access key names.
 
 As you modify your query, the Viewer window will update with the latest results. If there are any errors in the query (syntax errors, etc.), they will be displayed in the Status window at the bottom.
 
@@ -76,6 +76,7 @@ $
 
 ## TODO
 The project is at a very simple working state. Here are some short-term plans:
+
 - Allow scrolling of the Viewer window
 - Allow switching to `vi` key bindings
 - Allow saving of the input file
