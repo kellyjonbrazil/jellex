@@ -4,7 +4,7 @@ import sys
 import argparse
 from json.decoder import JSONDecodeError
 import jellex
-from jello.lib import load_json, pyquery, Json
+from jello.lib import opts, load_json, pyquery, Json
 
 import pygments
 from pygments.lexers import JsonLexer
@@ -31,6 +31,7 @@ parser.add_argument('filename',
                     help='JSON or JSON Lines file to open')
 args = parser.parse_args()
 
+opts.nulls = True
 
 try:
     with open(args.filename) as file:
@@ -39,6 +40,31 @@ try:
 except Exception as e:
     print(f'jellex: There was a problem opening that file:\n        {e}', file=sys.stderr)
     sys.exit(1)
+
+
+def get_item_stats(item):
+    items = 0
+    size = 0
+
+    if isinstance(item, (bool, float, int, str)) or item is None:
+        items = 1
+    elif isinstance(item, (list, dict)):
+        items = len(item)
+
+    if isinstance(item, str):
+        size = len(item)
+    elif isinstance(item, (float, int)) and not isinstance(item, bool):
+        size = len(str(item))
+    elif isinstance(item, list):
+        try:
+            size = len(''.join(item))
+        except Exception:
+            size = len(str(item))
+    elif isinstance(item, dict):
+        size = len(str(item))
+
+    return f'items: {items}\nitem size: {size}'
+
 
 def get_json(data, query):
     """Returns a Tuple of (<JSON Response>, <Exception Message>)"""
@@ -52,7 +78,7 @@ def get_json(data, query):
 
         # only return the first 10,000 chars for performance reasons for now
         last_output = output[:10000]
-        return output[:10000], ''
+        return output[:10000], get_item_stats(response)
 
     except JSONDecodeError:
         print('jellex: That was not a JSON file.', file=sys.stderr)
