@@ -1,5 +1,8 @@
 jellex changelog
 
+20210708 v0.2.2 (in progress)
+- Enhance jello query string on exit
+
 20210708 v0.2.1
 - Handle file open errors gracefully
 
