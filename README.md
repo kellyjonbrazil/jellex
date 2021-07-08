@@ -1,4 +1,3 @@
-![Tests](https://github.com/kellyjonbrazil/jellex/workflows/Tests/badge.svg?branch=master)
 ![Pypi](https://img.shields.io/pypi/v/jellex.svg)
 
 # Jello Explorer
