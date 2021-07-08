@@ -1,5 +1,9 @@
 jellex changelog
 
+20210708 v0.2.0
+- Add exception name to status window
+- Add version info with -v and --version options
+
 20210708 v0.1.3
 - Add simple file loading
 - Detect and exit gracefully on non-JSON file loading

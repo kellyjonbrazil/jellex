@@ -3,6 +3,7 @@
 import sys
 import argparse
 from json.decoder import JSONDecodeError
+import jellex
 from jello.lib import load_json, pyquery, Json
 
 import pygments
@@ -22,9 +23,14 @@ from prompt_toolkit.formatted_text import PygmentsTokens
 from prompt_toolkit.lexers import PygmentsLexer
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('filename')
+parser = argparse.ArgumentParser(description='Interactive JSON Explorer using Python syntax.')
+parser.add_argument('-v', '--version', action='version',
+                    version='%(prog)s {version}'.format(version=jellex.__version__),
+                    help='version information')
+parser.add_argument('filename',
+                    help='JSON or JSON Lines file to open')
 args = parser.parse_args()
+
 
 with open(args.filename) as file:
     file_text = file.read()
@@ -48,7 +54,7 @@ def get_json(data, query):
         sys.exit(1)
 
     except Exception as e:
-        return last_output, str(e)
+        return last_output, f'{e.__class__.__name__}:\n{e}'
 
 
 # Initial content
