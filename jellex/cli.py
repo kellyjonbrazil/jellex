@@ -1,6 +1,8 @@
 """jellex - query JSON at the command line with python syntax"""
 
+import sys
 import argparse
+from json.decoder import JSONDecodeError
 from jello.lib import load_json, pyquery, Json
 
 import pygments
@@ -41,6 +43,10 @@ def get_json(data, query):
         # only return the first 10,000 chars for performance reasons for now
         last_output = output[:10000]
         return output[:10000], ''
+
+    except JSONDecodeError:
+        print('jellex: That was not a JSON file.', file=sys.stderr)
+        sys.exit(1)
 
     except Exception as e:
         return last_output, str(e)
