@@ -1,5 +1,8 @@
 jellex changelog
 
+20210708 v0.2.1
+- Handle file open errors gracefully
+
 20210708 v0.2.0
 - Add exception name to status window
 - Add version info with -v and --version options

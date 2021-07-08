@@ -32,8 +32,13 @@ parser.add_argument('filename',
 args = parser.parse_args()
 
 
-with open(args.filename) as file:
-    file_text = file.read()
+try:
+    with open(args.filename) as file:
+        file_text = file.read()
+
+except Exception as e:
+    print(f'jellex: There was a problem opening that file:\n        {e}', file=sys.stderr)
+    sys.exit(1)
 
 def get_json(data, query):
     """Returns a Tuple of (<JSON Response>, <Exception Message>)"""
