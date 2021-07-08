@@ -11,9 +11,12 @@ Here is a video of the current progress: https://youtu.be/9VCXjINa74E
 Jello Explorer (`jellex`) is a Text User Interface program to interactively process JSON and JSON Lines at the console using Python syntax. `jellex` uses [`jello`](https://github.com/kellyjonbrazil/jello) on the back-end to run the queries.
 
 ## Install
-Work in progress
+Jello Explorer can be installed via `pip`:
+```bash
+pip install jellex
+```
 
-### Usage
+## Usage
 ```
 jellex file.json
 ```
@@ -70,3 +73,11 @@ jello '_[0].user'
 
 $
 ```
+
+## TODO
+The project is at a very simple working state. Here are some short-term plans:
+- Allow scrolling of the Viewer window
+- Allow switching to `vi` key bindings
+- Allow saving of the input file
+- Allow opening another file within the UI
+- Status bar showing the mode and filename, stats, etc.

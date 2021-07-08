@@ -1,7 +1,7 @@
 """jellex - TUI to query JSON at the command line with python syntax"""
 
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 AUTHOR = 'Kelly Brazil'
 WEBSITE = 'https://github.com/kellyjonbrazil/jellex'
 COPYRIGHT = '© 2021 Kelly Brazil'
