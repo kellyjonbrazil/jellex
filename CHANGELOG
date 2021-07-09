@@ -1,9 +1,10 @@
 jellex changelog
 
-20210708 v0.3.0
+20210709 v0.3.0
 - Change error colors
+- Add line numbers to Editor
 
-20210708 v0.2.4
+20210709 v0.2.4
 - Fix tab focus
 - Viewer window is now scrollable
 - Add mouse support for focus and cursor position

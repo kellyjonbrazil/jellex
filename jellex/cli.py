@@ -16,6 +16,7 @@ from prompt_toolkit.buffer import Buffer
 from prompt_toolkit.layout import ScrollablePane, Dimension
 from prompt_toolkit.layout.containers import VSplit, HSplit, Window
 from prompt_toolkit.layout.controls import BufferControl, FormattedTextControl
+from prompt_toolkit.layout.margins import NumberedMargin
 from prompt_toolkit.layout.layout import Layout
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.key_binding.bindings.focus import focus_next, focus_previous
@@ -116,9 +117,11 @@ kb.add('tab')(focus_next)
 kb.add('s-tab')(focus_previous)
 
 # Editor Window
-editor_window = Window(content=BufferControl(buffer=query, lexer=PygmentsLexer(PythonLexer),
+editor_window = Window(content=BufferControl(buffer=query,
+                                             lexer=PygmentsLexer(PythonLexer),
                                              focus_on_click=True),
                        allow_scroll_beyond_bottom=True,
+                       left_margins=[NumberedMargin()],
                        ignore_content_width=True)
 editor_scroll = ScrollablePane(show_scrollbar=True,
                                content=editor_window)
