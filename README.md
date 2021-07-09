@@ -3,7 +3,7 @@
 # Jello Explorer
 TUI to filter JSON and JSON Lines data with Python syntax
 
-Here is a video of `jellex` in action: https://youtu.be/9VCXjINa74E
+Here is a video of `jellex` in action: https://youtu.be/-oR0yZ7JaO8
 
 Jello Explorer (`jellex`) is a Text User Interface program to interactively process JSON and JSON Lines at the console using Python syntax. `jellex` uses [`jello`](https://github.com/kellyjonbrazil/jello) on the back-end to run the queries.
 
@@ -32,7 +32,7 @@ Here is an example after running `jellex twitterdata.json` and modifying the que
 
 ```python
 ┌────────────────| Editor |────────────────┐┌───────────────| Viewer |────────────────┐
-│_[0].user                                ^││{                                       ^│
+│ 1 _[0].user                             ^││{                                       ^│
 │                                          ││  "follow_request_sent": false,          │
 │                                          ││  "has_extended_profile": false,         │
 │                                          ││  "profile_use_background_image": true,  │
@@ -74,11 +74,3 @@ jello '_[0].user'
 
 $
 ```
-
-## TODO
-The project is at a very simple working state. Here are some short-term plans:
-
-- Allow switching to `vi` key bindings
-- Allow saving of the input file
-- Allow opening another file within the UI
-- Status bar showing the mode and filename, etc.
