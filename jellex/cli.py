@@ -67,7 +67,7 @@ def get_item_stats(item):
 
 
 def get_json(data, query):
-    """Returns a Tuple of (<JSON Response>, <Exception Message>)"""
+    """Returns a Tuple of (<JSON Response>, <Stats|Exception Message>)"""
     global last_output
 
     try:
