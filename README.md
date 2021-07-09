@@ -28,6 +28,7 @@ Use `CTRL-Q` to exit.
 > Note: Reserved key names that cannot be accessed using dot notation can be accessed via standard python dictionary notation. (e.g. `_.foo["get"]` instead of `_.foo.get`)
 
 Here is an example after running `jellex twitterdata.json` and modifying the query:
+
 ```python
 ┌────────────────| Editor |────────────────┐┌───────────────| Viewer |────────────────┐
 │_[0].user                                ^││{                                       ^│
@@ -59,8 +60,8 @@ Here is an example after running `jellex twitterdata.json` and modifying the que
 │                                         v││      "urls": [                         v│
 └──────────────────────────────────────────┘└─────────────────────────────────────────┘
 ┌─────────────────────────────────────| Status |──────────────────────────────────────┐
-│                                                                                     │
-│                                                                                     │
+│items: 41                                                                            │
+│item size: 2054                                                                      │
 └─────────────────────────────────────────────────────────────────────────────────────┘
 ```
 When you exit (`CTRL-Q`), you will be presented with your `jello` filter:
