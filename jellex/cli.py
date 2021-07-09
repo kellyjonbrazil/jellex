@@ -6,20 +6,19 @@ from json.decoder import JSONDecodeError
 import jellex
 from jello.lib import opts, load_json, pyquery, Json
 
-import pygments
 from pygments.lexers import JsonLexer
 from pygments.lexers.python import PythonLexer
 
 from prompt_toolkit import Application
-from prompt_toolkit.widgets import Frame
+from prompt_toolkit.formatted_text import to_formatted_text, HTML
+from prompt_toolkit.widgets import Frame, TextArea
 from prompt_toolkit.buffer import Buffer
 from prompt_toolkit.layout import ScrollablePane, Dimension
 from prompt_toolkit.layout.containers import VSplit, HSplit, Window
 from prompt_toolkit.layout.controls import BufferControl, FormattedTextControl
 from prompt_toolkit.layout.layout import Layout
-from prompt_toolkit.application import get_app
 from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit.formatted_text import PygmentsTokens
+from prompt_toolkit.key_binding.bindings.focus import focus_next, focus_previous
 from prompt_toolkit.lexers import PygmentsLexer
 
 
@@ -63,7 +62,7 @@ def get_item_stats(item):
     elif isinstance(item, dict):
         size = len(str(item))
 
-    return f'items: {items}\nitem size: {size}'
+    return to_formatted_text(HTML(f'<green><b>items:</b></green> {items}\n<green><b>item size:</b></green> {size}'))
 
 
 def get_json(data, query):
@@ -85,26 +84,25 @@ def get_json(data, query):
         sys.exit(1)
 
     except Exception as e:
-        return last_output, f'{e.__class__.__name__}:\n{e}'
+        exception_name = e.__class__.__name__.replace('<', '').replace('>', '')
+        exception_message = str(e).replace('<', '').replace('>', '')
+        return last_output, to_formatted_text(HTML(f'<magenta><b>{exception_name}:</b></magenta>\n<magenta>{exception_message}</magenta>'))
 
 
 # Initial content
 query = Buffer()
 query.text = '_'
 last_output, status_text = get_json(file_text, query.text)
-json_text_tokens = list(pygments.lex(last_output, lexer=JsonLexer()))
 
 
 def update_viewer_window(event):
     # get new JSON output
-    global json_text_tokens
     global status_text
     json_response, status_text = get_json(file_text, query.text)
-    json_text_tokens = list(pygments.lex(json_response, lexer=JsonLexer()))
 
     # re-render the viewer window
     global viewer_window
-    viewer_window.content = FormattedTextControl(PygmentsTokens(json_text_tokens))
+    viewer_window.text = last_output
 
     # re-render the status window
     global status_window
@@ -114,9 +112,12 @@ def update_viewer_window(event):
 query = Buffer(on_text_changed=update_viewer_window)
 
 kb = KeyBindings()
+kb.add('tab')(focus_next)
+kb.add('s-tab')(focus_previous)
 
 # Editor Window
-editor_window = Window(content=BufferControl(buffer=query, lexer=PygmentsLexer(PythonLexer)),
+editor_window = Window(content=BufferControl(buffer=query, lexer=PygmentsLexer(PythonLexer),
+                                             focus_on_click=True),
                        allow_scroll_beyond_bottom=True,
                        ignore_content_width=True)
 editor_scroll = ScrollablePane(show_scrollbar=True,
@@ -126,13 +127,13 @@ editor = Frame(title='Editor',
 
 
 # Viewer Window
-viewer_window = Window(content=FormattedTextControl(PygmentsTokens(json_text_tokens)),
-                       allow_scroll_beyond_bottom=True,
-                       ignore_content_width=True)
-viewer_scroll = ScrollablePane(show_scrollbar=True,
-                               content=viewer_window)
+viewer_window = TextArea(text=last_output,
+                         wrap_lines=False,
+                         scrollbar=True,
+                         focus_on_click=True,
+                         lexer=PygmentsLexer(JsonLexer))
 viewer = Frame(title='Viewer',
-               body=viewer_scroll)
+               body=viewer_window)
 
 
 # Status Window
@@ -154,28 +155,19 @@ root_container = HSplit(
 layout = Layout(root_container)
 query.insert_text('_')
 
+
 # Application
 app = Application(key_bindings=kb,
                   layout=layout,
+                  mouse_support=True,
                   full_screen=True)
 
 
+@kb.add('c-c')
 @kb.add('c-q')
 def exit_(event):
-    """Pressing Ctrl-Q will exit the user interface."""
+    """Pressing Ctrl-Q or Ctrl-C will exit the user interface."""
     event.app.exit(result=query.text)
-
-
-@kb.add('tab')
-def focus_viewer(event):
-    """Pressing TAB will change the focus."""
-    get_app().layout.focus(viewer_window)
-
-
-@kb.add('s-tab')
-def focus_editor(event):
-    """Pressing Shift TAB will change the focus."""
-    get_app().layout.focus(editor_window)
 
 
 def main():

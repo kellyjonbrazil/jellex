@@ -1,5 +1,11 @@
 jellex changelog
 
+20210708 v0.2.4
+- Fix tab focus
+- Viewer window is now scrollable
+- Add mouse support for focus and cursor position
+- Add colors to status window text
+
 20210708 v0.2.3
 - Add item number and size to status window
 - Print null values

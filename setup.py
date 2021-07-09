@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setuptools.setup(
     name='jellex',
-    version='0.2.3',
+    version='0.2.4',
     author='Kelly Brazil',
     author_email='kellyjonbrazil@gmail.com',
     description='TUI Jello Explorer - filter JSON and JSON Lines data with Python syntax.',
