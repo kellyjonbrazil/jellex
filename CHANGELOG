@@ -1,5 +1,8 @@
 jellex changelog
 
+20210708 v0.3.0
+- Change error colors
+
 20210708 v0.2.4
 - Fix tab focus
 - Viewer window is now scrollable

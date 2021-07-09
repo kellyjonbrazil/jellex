@@ -86,7 +86,7 @@ def get_json(data, query):
     except Exception as e:
         exception_name = e.__class__.__name__.replace('<', '').replace('>', '')
         exception_message = str(e).replace('<', '').replace('>', '')
-        return last_output, to_formatted_text(HTML(f'<magenta><b>{exception_name}:</b></magenta>\n<magenta>{exception_message}</magenta>'))
+        return last_output, to_formatted_text(HTML(f'<red><b>{exception_name}:</b></red>\n<red>{exception_message}</red>'))
 
 
 # Initial content
