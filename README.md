@@ -1,5 +1,7 @@
 ![Pypi](https://img.shields.io/pypi/v/jellex.svg)
 
+![jellex](https://github.com/kellyjonbrazil/jellex/raw/master/_images/jellex.png)
+
 # Jello Explorer
 TUI to filter JSON and JSON Lines data with Python syntax
 
