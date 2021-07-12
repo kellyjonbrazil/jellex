@@ -1,5 +1,8 @@
 jellex changelog
 
+202107xx v0.4.0 (in progress)
+- Include CHANGELOG in source distribution
+
 20210709 v0.3.0
 - Change error colors
 - Add line numbers to Editor
