@@ -5,6 +5,7 @@ import argparse
 from json.decoder import JSONDecodeError
 import jellex
 from jello.lib import opts, load_json, pyquery, Json
+from jello.dotmap import DotMap
 
 from pygments.lexers import JsonLexer
 from pygments.lexers.python import PythonLexer
@@ -18,8 +19,9 @@ from prompt_toolkit.layout.containers import VSplit, HSplit, Window
 from prompt_toolkit.layout.controls import BufferControl, FormattedTextControl
 from prompt_toolkit.layout.margins import NumberedMargin
 from prompt_toolkit.layout.layout import Layout
+from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit.key_binding.bindings.focus import focus_next, focus_previous
+from prompt_toolkit.key_binding.bindings.focus import focus_next
 from prompt_toolkit.lexers import PygmentsLexer
 
 
@@ -69,6 +71,7 @@ def get_item_stats(item):
 def get_json(data, query):
     """Returns a Tuple of (<JSON Response>, <Stats|Exception Message>)"""
     global last_output
+    global response
 
     try:
         jdata = load_json(data)
@@ -94,6 +97,21 @@ def get_json(data, query):
 query = Buffer()
 query.text = '_'
 last_output, status_text = get_json(file_text, query.text)
+response = None
+
+
+def get_completions():
+    response
+    if response:
+        if isinstance(response, (dict, DotMap)):
+            return list(response.keys())
+        if isinstance(response, list):
+            item_list = []
+            for i, item in enumerate(response):
+                item_list.append(f'[{i}]')
+            return item_list
+
+    return []
 
 
 def update_viewer_window(event):
@@ -110,11 +128,13 @@ def update_viewer_window(event):
     status_window.content = FormattedTextControl(status_text)
 
 
-query = Buffer(on_text_changed=update_viewer_window)
+item_completer = WordCompleter(words=get_completions)
+query = Buffer(on_text_changed=update_viewer_window,
+               completer=item_completer,
+               complete_while_typing=True)
 
 kb = KeyBindings()
-kb.add('tab')(focus_next)
-kb.add('s-tab')(focus_previous)
+kb.add('c-\\')(focus_next)
 
 # Editor Window
 editor_window = Window(content=BufferControl(buffer=query,

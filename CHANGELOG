@@ -1,7 +1,9 @@
 jellex changelog
 
-202107xx v0.4.0 (in progress)
+20210730 v0.4.0
 - Include CHANGELOG in source distribution
+- Add automatic completions for current list indicies and key names
+- CTRL-\ now changes focus to the next window
 
 20210709 v0.3.0
 - Change error colors
