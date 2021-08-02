@@ -25,9 +25,10 @@ The Editor window uses standard EMACS key bindings and allows you to type your P
 
 As you modify your query, the Viewer window will update with the latest results. If there are any errors in the query (syntax errors, etc.), they will be displayed in the Status window at the bottom.
 
-Current list indicies and key names are available for auto completions.
+Tab completions are available for current context list indicies and key names.
 
 Use `CTRL-\` to toggle the focus between the Editor and Viewer windows.
+
 Use `CTRL-Q` or `CTRL-C`to exit.
 
 > Note: Reserved key names that cannot be accessed using dot notation can be accessed via standard python dictionary notation. (e.g. `_.foo["get"]` instead of `_.foo.get`)
