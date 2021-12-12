@@ -36,6 +36,7 @@ Use `CTRL-Q` or `CTRL-C`to exit.
 Here is an example after running `jellex twitterdata.json` and modifying the query:
 
 ![jellex](https://github.com/kellyjonbrazil/jellex/raw/master/_images/jellex-twitterdata.png)
+
 When you exit (`CTRL-Q` or `CTRL-C`), you will be presented with your `jello` filter:
 ```
 $ jellex twitterdata.json 
