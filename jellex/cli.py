@@ -4,11 +4,12 @@ import sys
 import argparse
 from json.decoder import JSONDecodeError
 import jellex
-from jello.lib import opts, load_json, pyquery, Json
+from jello.lib import opts, load_json, pyquery, Json, Schema
 from jello.dotmap import DotMap
 
 from pygments.lexers import JsonLexer
 from pygments.lexers.python import PythonLexer
+from pygments.lexers.javascript import JavascriptLexer
 
 from prompt_toolkit import Application
 from prompt_toolkit.formatted_text import to_formatted_text, HTML
@@ -93,10 +94,26 @@ def get_json(data, query):
         return last_output, to_formatted_text(HTML(f'<red><b>{exception_name}:</b></red>\n<red>{exception_message}</red>'))
 
 
+def get_schema(data, query):
+    """Returns schema output from jello"""
+    global last_schema_output
+    global response
+
+    jdata = load_json(data)
+    # response = pyquery(jdata, query)
+    schema_out = Schema()
+    output = schema_out.create_schema(response)
+
+    # only return the first 10,000 chars for performance reasons for now
+    last_schema_output = output[:10000]
+    return output[:10000]
+
+
 # Initial content
 query = Buffer()
 query.text = '_'
 last_output, status_text = get_json(file_text, query.text)
+last_schema_output = get_schema(file_text, query.text)
 response = None
 
 
@@ -117,11 +134,16 @@ def get_completions():
 def update_viewer_window(event):
     # get new JSON output
     global status_text
-    json_response, status_text = get_json(file_text, query.text)
+    _, status_text = get_json(file_text, query.text)
+    get_schema(file_text, query.text)
 
     # re-render the viewer window
     global viewer_window
     viewer_window.text = last_output
+
+    # re-render the schema window
+    global schema_window
+    schema_window.text = last_schema_output
 
     # re-render the status window
     global status_window
@@ -159,6 +181,17 @@ viewer = Frame(title='Viewer',
                body=viewer_window)
 
 
+# Schema Window
+schema_window = TextArea(text=last_output,
+                         height=5,
+                         wrap_lines=False,
+                         scrollbar=True,
+                         focus_on_click=True,
+                         lexer=PygmentsLexer(JavascriptLexer))
+schema = Frame(title='Schema',
+               body=schema_window)
+
+
 # Status Window
 status_dimension = Dimension(min=2, max=2, preferred=2)
 status_window = Window(content=FormattedTextControl(status_text),
@@ -171,6 +204,7 @@ status = Frame(title='Status',
 root_container = HSplit(
     [
         VSplit([editor, viewer]),
+        schema,
         status
     ]
 )
