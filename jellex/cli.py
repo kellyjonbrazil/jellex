@@ -229,7 +229,7 @@ def exit_(event):
 
 def main():
     result = app.run()
-    result = result.replace("'", '"')
+    result = result.replace("'", '"').strip()
 
     if result == '' or result == '_':
         print(f"Your query:\n\njello _\n")
