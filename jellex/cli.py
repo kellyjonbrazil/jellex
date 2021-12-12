@@ -99,14 +99,14 @@ def get_schema(data, query):
     global last_schema_output
     global response
 
-    jdata = load_json(data)
-    # response = pyquery(jdata, query)
-    schema_out = Schema()
-    output = schema_out.create_schema(response)
-
-    # only return the first 10,000 chars for performance reasons for now
-    last_schema_output = output[:10000]
-    return output[:10000]
+    try:
+        schema_out = Schema()
+        output = schema_out.create_schema(response)
+        # only return the first 10,000 chars for performance reasons for now
+        last_schema_output = output[:10000]
+        return output[:10000]
+    except Exception:
+        last_schema_output
 
 
 # Initial content
