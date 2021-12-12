@@ -19,7 +19,7 @@ pip install jellex
 ```
 jellex file.json
 ```
-An Editor window displays on the left, a Viewer window displays on the right. Schema and Status windows display on the bottom.
+An Editor window displays on the left and a Viewer window displays on the right. Schema and Status windows display on the bottom.
 
 The Editor window uses standard EMACS key bindings and allows you to type your Python syntax query. `_` is the sanitized JSON from the file presented as a python dict or list of dicts. You can use dot notation or traditional python bracket notation to access key names.
 
@@ -27,7 +27,7 @@ As you modify your query, the Viewer window will update with the latest results.
 
 Tab completions are available for current context list indicies and key names.
 
-Use `CTRL-\` to toggle the focus between the Editor and Viewer windows.
+Use `CTRL-\` to toggle the focus between the Editor, Viewer, and Schema windows.
 
 Use `CTRL-Q` or `CTRL-C`to exit.
 
