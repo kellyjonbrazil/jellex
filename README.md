@@ -29,6 +29,8 @@ Tab completions are available for current context list indicies and key names.
 
 Use `CTRL-\` to toggle the focus between the Editor, Viewer, and Schema windows.
 
+Use `CTRL-S` to toggle the Schema window.
+
 Use `CTRL-Q` or `CTRL-C`to exit.
 
 > Note: Reserved key names that cannot be accessed using dot notation can be accessed via standard python dictionary notation. (e.g. `_.foo["get"]` instead of `_.foo.get`)
