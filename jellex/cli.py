@@ -194,12 +194,6 @@ schema = Frame(title='Schema',
 show_schema = False
 
 
-@Condition
-def show_schema_window():
-    global show_schema
-    return show_schema
-
-
 @kb.add('c-s')
 def toggle_schema(event):
     global show_schema
@@ -219,7 +213,7 @@ root_container = HSplit(
     [
         VSplit([editor,
                 HSplit([viewer,
-                        ConditionalContainer(schema, filter=show_schema_window)]
+                        ConditionalContainer(schema, filter=Condition(lambda: show_schema))]
                        )
                 ]
                ),
