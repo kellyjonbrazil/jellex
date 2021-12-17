@@ -41,7 +41,7 @@ Here is an example after running `jellex twitterdata.json` and modifying the que
 
 When you exit (`CTRL-Q` or `CTRL-C`), you will be presented with your `jello` filter:
 ```
-$ jellex twitterdata.json 
+$ jellex twitterdata.json
 Your query:
 
 jello '_[0].user'
