@@ -15,7 +15,7 @@ from prompt_toolkit import Application
 from prompt_toolkit.formatted_text import to_formatted_text, HTML
 from prompt_toolkit.widgets import Frame, TextArea
 from prompt_toolkit.buffer import Buffer
-from prompt_toolkit.layout import ScrollablePane, Dimension
+from prompt_toolkit.layout import ScrollablePane, Dimension, ConditionalContainer
 from prompt_toolkit.layout.containers import VSplit, HSplit, Window
 from prompt_toolkit.layout.controls import BufferControl, FormattedTextControl
 from prompt_toolkit.layout.margins import NumberedMargin
@@ -24,6 +24,7 @@ from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.key_binding.bindings.focus import focus_next
 from prompt_toolkit.lexers import PygmentsLexer
+from prompt_toolkit.filters import Condition
 
 
 parser = argparse.ArgumentParser(description='Interactive JSON Explorer using Python syntax.')
@@ -183,13 +184,20 @@ viewer = Frame(title='Viewer',
 
 # Schema Window
 schema_window = TextArea(text=last_output,
-                         height=5,
                          wrap_lines=False,
                          scrollbar=True,
                          focus_on_click=True,
                          lexer=PygmentsLexer(JavascriptLexer))
 schema = Frame(title='Schema',
                body=schema_window)
+
+show_schema = False
+
+
+@kb.add('c-s')
+def toggle_schema(event):
+    global show_schema
+    show_schema = not show_schema
 
 
 # Status Window
@@ -203,8 +211,12 @@ status = Frame(title='Status',
 # Main Screen
 root_container = HSplit(
     [
-        VSplit([editor, viewer]),
-        schema,
+        VSplit([editor,
+                HSplit([viewer,
+                        ConditionalContainer(schema, filter=Condition(lambda: show_schema))]
+                       )
+                ]
+               ),
         status
     ]
 )
