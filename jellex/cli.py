@@ -107,7 +107,7 @@ def get_schema(data, query):
         last_schema_output = output[:10000]
         return output[:10000]
     except Exception:
-        last_schema_output
+        pass
 
 
 # Initial content
