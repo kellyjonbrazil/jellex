@@ -46,6 +46,8 @@ except Exception as e:
     sys.exit(1)
 
 jdata = load_json(file_text)
+json_out = Json()
+schema_out = Schema()
 
 
 def get_item_stats(item):
@@ -79,7 +81,6 @@ def get_json(query):
 
     try:
         response = pyquery(jdata, query)
-        json_out = Json()
         output = json_out.create_json(response)
 
         # only return the first 10,000 chars for performance reasons for now
@@ -102,7 +103,6 @@ def get_schema():
     global response
 
     try:
-        schema_out = Schema()
         output = schema_out.create_schema(response)
         # only return the first 10,000 chars for performance reasons for now
         last_schema_output = output[:10000]
