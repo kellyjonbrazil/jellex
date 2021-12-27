@@ -75,7 +75,7 @@ def get_json(data, query):
     global response
 
     try:
-        jdata = load_json(data)
+        jdata = load_json(file_text)
         response = pyquery(jdata, query)
         json_out = Json()
         output = json_out.create_json(response)
@@ -99,7 +99,7 @@ def get_schema(data, query):
     global last_schema_output
     global response
 
-    jdata = load_json(data)
+    # jdata = load_json(data)
     # response = pyquery(jdata, query)
     schema_out = Schema()
     output = schema_out.create_schema(response)
