@@ -45,6 +45,11 @@ except Exception as e:
     print(f'jellex: There was a problem opening that file:\n        {e}', file=sys.stderr)
     sys.exit(1)
 
+jdata = load_json(file_text)
+del file_text
+json_out = Json()
+schema_out = Schema()
+
 
 def get_item_stats(item):
     items = 0
@@ -70,20 +75,19 @@ def get_item_stats(item):
     return to_formatted_text(HTML(f'<green><b>items:</b></green> {items}\n<green><b>item size:</b></green> {size}'))
 
 
-def get_json(data, query):
+def get_json(query):
     """Returns a Tuple of (<JSON Response>, <Stats|Exception Message>)"""
     global last_output
+    global status_text
     global response
 
     try:
-        jdata = load_json(data)
         response = pyquery(jdata, query)
-        json_out = Json()
         output = json_out.create_json(response)
 
         # only return the first 10,000 chars for performance reasons for now
         last_output = output[:10000]
-        return output[:10000], get_item_stats(response)
+        status_text = get_item_stats(response)
 
     except JSONDecodeError:
         print('jellex: That was not a JSON file.', file=sys.stderr)
@@ -92,20 +96,18 @@ def get_json(data, query):
     except Exception as e:
         exception_name = e.__class__.__name__.replace('<', '').replace('>', '')
         exception_message = str(e).replace('<', '').replace('>', '')
-        return last_output, to_formatted_text(HTML(f'<red><b>{exception_name}:</b></red>\n<red>{exception_message}</red>'))
+        status_text = to_formatted_text(HTML(f'<red><b>{exception_name}:</b></red>\n<red>{exception_message}</red>'))
 
 
-def get_schema(data, query):
+def get_schema():
     """Returns schema output from jello"""
     global last_schema_output
     global response
 
     try:
-        schema_out = Schema()
         output = schema_out.create_schema(response)
         # only return the first 10,000 chars for performance reasons for now
         last_schema_output = output[:10000]
-        return output[:10000]
     except Exception:
         pass
 
@@ -113,9 +115,12 @@ def get_schema(data, query):
 # Initial content
 query = Buffer()
 query.text = '_'
-last_output, status_text = get_json(file_text, query.text)
-last_schema_output = get_schema(file_text, query.text)
+last_output = ''
+last_schema_output = ''
+status_text = ''
 response = None
+get_json(query.text)
+get_schema()
 
 
 def get_completions():
@@ -134,9 +139,8 @@ def get_completions():
 
 def update_viewer_window(event):
     # get new JSON output
-    global status_text
-    _, status_text = get_json(file_text, query.text)
-    get_schema(file_text, query.text)
+    get_json(query.text)
+    get_schema()
 
     # re-render the viewer window
     global viewer_window
