@@ -46,6 +46,7 @@ except Exception as e:
     sys.exit(1)
 
 jdata = load_json(file_text)
+del file_text
 json_out = Json()
 schema_out = Schema()
 
