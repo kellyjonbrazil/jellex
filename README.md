@@ -29,6 +29,8 @@ Tab completions are available for current context list indicies and key names.
 
 Use `CTRL-\` to toggle the focus between the Editor, Viewer, and Schema windows.
 
+Use `CTRL-S` to toggle the Schema window.
+
 Use `CTRL-Q` or `CTRL-C`to exit.
 
 > Note: Reserved key names that cannot be accessed using dot notation can be accessed via standard python dictionary notation. (e.g. `_.foo["get"]` instead of `_.foo.get`)
@@ -37,10 +39,9 @@ Here is an example after running `jellex twitterdata.json` and modifying the que
 
 ![jellex](https://github.com/kellyjonbrazil/jellex/raw/master/_images/jellex-twitterdata.png)
 
-```
 When you exit (`CTRL-Q` or `CTRL-C`), you will be presented with your `jello` filter:
 ```
-$ jellex twitterdata.json 
+$ jellex twitterdata.json
 Your query:
 
 jello '_[0].user'
