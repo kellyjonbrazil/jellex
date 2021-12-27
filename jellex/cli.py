@@ -77,6 +77,7 @@ def get_item_stats(item):
 def get_json(query):
     """Returns a Tuple of (<JSON Response>, <Stats|Exception Message>)"""
     global last_output
+    global status_text
     global response
 
     try:
@@ -85,7 +86,7 @@ def get_json(query):
 
         # only return the first 10,000 chars for performance reasons for now
         last_output = output[:10000]
-        return output[:10000], get_item_stats(response)
+        status_text = get_item_stats(response)
 
     except JSONDecodeError:
         print('jellex: That was not a JSON file.', file=sys.stderr)
@@ -94,7 +95,7 @@ def get_json(query):
     except Exception as e:
         exception_name = e.__class__.__name__.replace('<', '').replace('>', '')
         exception_message = str(e).replace('<', '').replace('>', '')
-        return last_output, to_formatted_text(HTML(f'<red><b>{exception_name}:</b></red>\n<red>{exception_message}</red>'))
+        status_text = to_formatted_text(HTML(f'<red><b>{exception_name}:</b></red>\n<red>{exception_message}</red>'))
 
 
 def get_schema():
@@ -106,7 +107,6 @@ def get_schema():
         output = schema_out.create_schema(response)
         # only return the first 10,000 chars for performance reasons for now
         last_schema_output = output[:10000]
-        return output[:10000]
     except Exception:
         pass
 
@@ -114,9 +114,12 @@ def get_schema():
 # Initial content
 query = Buffer()
 query.text = '_'
-last_output, status_text = get_json(query.text)
-last_schema_output = get_schema()
+last_output = ''
+last_schema_output = ''
+status_text = ''
 response = None
+get_json(query.text)
+get_schema()
 
 
 def get_completions():
@@ -135,8 +138,7 @@ def get_completions():
 
 def update_viewer_window(event):
     # get new JSON output
-    global status_text
-    _, status_text = get_json(query.text)
+    get_json(query.text)
     get_schema()
 
     # re-render the viewer window
