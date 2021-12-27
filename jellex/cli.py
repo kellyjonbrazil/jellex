@@ -45,6 +45,8 @@ except Exception as e:
     print(f'jellex: There was a problem opening that file:\n        {e}', file=sys.stderr)
     sys.exit(1)
 
+jdata = load_json(file_text)
+
 
 def get_item_stats(item):
     items = 0
@@ -76,7 +78,6 @@ def get_json(query):
     global response
 
     try:
-        jdata = load_json(file_text)
         response = pyquery(jdata, query)
         json_out = Json()
         output = json_out.create_json(response)
