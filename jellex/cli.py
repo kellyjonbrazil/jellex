@@ -76,7 +76,7 @@ def get_item_stats(item):
 
 
 def get_json(query):
-    """Returns a Tuple of (<JSON Response>, <Stats|Exception Message>)"""
+    """Updates response, last_output, and status_text"""
     global last_output
     global status_text
     global response
@@ -100,7 +100,7 @@ def get_json(query):
 
 
 def get_schema():
-    """Returns schema output from jello"""
+    """Updates last_schema_output"""
     global last_schema_output
     global response
 
