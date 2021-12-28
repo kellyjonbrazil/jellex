@@ -45,7 +45,12 @@ except Exception as e:
     print(f'jellex: There was a problem opening that file:\n        {e}', file=sys.stderr)
     sys.exit(1)
 
-jdata = load_json(file_text)
+try:
+    jdata = load_json(file_text)
+except JSONDecodeError:
+    print('jellex: That was not a JSON or JSON Lines file.', file=sys.stderr)
+    sys.exit(1)
+
 del file_text
 json_out = Json()
 schema_out = Schema()
@@ -88,10 +93,6 @@ def get_json(query):
         # only return the first 10,000 chars for performance reasons for now
         last_output = output[:10000]
         status_text = get_item_stats(response)
-
-    except JSONDecodeError:
-        print('jellex: That was not a JSON file.', file=sys.stderr)
-        sys.exit(1)
 
     except Exception as e:
         exception_name = e.__class__.__name__.replace('<', '').replace('>', '')
