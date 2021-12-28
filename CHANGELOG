@@ -1,5 +1,9 @@
 jellex changelog
 
+20211228 v0.5.5
+- Fix non-JSON file loading error
+- Minor updates
+
 20211228 v0.5.4
 - Minor performance optimization
 
