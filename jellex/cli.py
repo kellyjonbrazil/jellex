@@ -124,7 +124,7 @@ get_schema()
 
 
 def get_completions():
-    response
+    global response
     if response:
         if isinstance(response, (dict, DotMap)):
             return list(response.keys())
