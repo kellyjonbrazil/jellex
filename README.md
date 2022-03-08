@@ -1,4 +1,4 @@
-![Pypi](https://img.shields.io/pypi/v/jellex.svg)
+[![Pypi](https://img.shields.io/pypi/v/jellex.svg)](https://pypi.org/project/jellex/)
 
 ![jellex](https://github.com/kellyjonbrazil/jellex/raw/master/_images/jellex.png)
 
@@ -11,6 +11,7 @@ Jello Explorer (`jellex`) is a Text User Interface program to interactively proc
 
 ## Install
 Jello Explorer can be installed via `pip`:
+[![Pypi](https://img.shields.io/pypi/v/jellex.svg)](https://pypi.org/project/jellex/)
 ```bash
 pip install jellex
 ```
