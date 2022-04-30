@@ -1,3 +1,2 @@
 jello>=1.4.4
-rich>=10.1.0
 Pygments>=2.4.2
