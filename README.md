@@ -19,8 +19,19 @@ pip install jellex
 
 ## Usage
 ```
-jellex file.json
+jellex FILE
 ```
+
+Examples:
+```
+$ jellex file.json
+```
+
+or with process substitution:
+```
+$ jellex <(git log | jc --git-log)
+```
+
 An Editor window displays on the left and a Viewer window displays on the right. A Schema view can be toggled on the right and a Status window displays on the bottom.
 
 The Editor window uses standard EMACS key bindings and allows you to type your Python syntax query. `_` is the loaded JSON from the file presented as a python dict or list of dicts. You can use dot notation or traditional python bracket notation to access key names.
