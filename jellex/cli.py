@@ -27,7 +27,8 @@ from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.filters import Condition
 
 
-parser = argparse.ArgumentParser(description='Interactive JSON Explorer using Python syntax.')
+parser = argparse.ArgumentParser(prog='jellex',
+                                 description='Interactive JSON Explorer using Python syntax.')
 parser.add_argument('-v', '--version', action='version',
                     version='%(prog)s {version}'.format(version=jellex.__version__),
                     help='version information')
