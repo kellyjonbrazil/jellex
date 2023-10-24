@@ -5,13 +5,13 @@ with open('README.md', 'r') as f:
 
 setuptools.setup(
     name='jellex',
-    version='0.5.6',
+    version='0.5.7',
     author='Kelly Brazil',
     author_email='kellyjonbrazil@gmail.com',
     description='TUI Jello Explorer - filter JSON and JSON Lines data with Python syntax.',
     install_requires=[
         'jello>=1.4.4',
-        'prompt-toolkit>=3.0.19',
+        'prompt-toolkit==3.0.36',
         'Pygments>=2.4.2'
     ],
     license='MIT',
